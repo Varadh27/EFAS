@@ -64,7 +64,6 @@ The system checks for 5 common audit issues:
 ## Project Structure
 
 ```text
-├── AGENT.md                        # Project instructions & standards
 ├── README.md                       # Setup and project documentation
 ├── docker-compose.yml              # PostgreSQL database container
 ├── Dockerfile                      # Application container file
