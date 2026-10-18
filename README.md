@@ -2,6 +2,9 @@
 
 An automated financial audit system built with **Python**, **LangGraph**, **FastAPI**, and **PostgreSQL**. It scans general ledger transactions, checks them against company expense policies, and pauses for human approval whenever high-risk transactions are detected.
 
+<!-- Project Interface / Home Page Screenshot Below: assets/home_interface.png -->
+![EFAS Interface Overview](assets/home_interface.png)
+
 ---
 
 ## What It Does
