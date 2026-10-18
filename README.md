@@ -1,4 +1,4 @@
-# Enterprise Financial Audit & Variance Multi-Agent System
+# Enterprise Financial Audit & Variance Multi-Agent System (EFAS)
 
 An enterprise-grade financial audit, three-way matching, and variance reconciliation multi-agent system built with **LangGraph**, **FastAPI**, **PostgreSQL**, and **Pytest**.
 
