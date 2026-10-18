@@ -128,3 +128,76 @@ uvicorn src.api.main:app --reload --port 8000
 
 - **Health Check:** `http://localhost:8000/health`
 - **Interactive Swagger UI:** `http://localhost:8000/docs`
+
+---
+
+## Test Case Demonstrations
+
+You can run these test cases interactively in the Swagger UI (`http://localhost:8000/docs`) or via `curl`. 
+
+### Test Case 1: Compliant Spend Run (No Anomalies)
+- **Endpoint:** `POST /api/v1/audit/start`
+- **Path Parameter:** None
+- **Request Body (JSON):**
+```json
+{
+  "thread_id": "demo-thread-compliant",
+  "user_directive": "SELECT * FROM general_ledger WHERE cost_center_code = 'CC-100' AND amount < 3500;"
+}
+```
+- **Expected Outcome:** `200 OK` with `"status": "COMPLETED"` and `"anomalies_detected": 0`.
+
+<!-- Add Screenshot Below: assets/test_case_1_compliant.png -->
+![Test Case 1 - Compliant Run](assets/test_case_1_compliant.png)
+
+---
+
+### Test Case 2: Material Anomaly Triggered (HITL Gate Pauses Execution)
+- **Endpoint:** `POST /api/v1/audit/start`
+- **Path Parameter:** None
+- **Request Body (JSON):**
+```json
+{
+  "thread_id": "demo-thread-anomaly-01",
+  "user_directive": "SELECT * FROM general_ledger WHERE amount > 5000;"
+}
+```
+- **Expected Outcome:** `200 OK` with `"status": "AWAITING_HUMAN_APPROVAL"`, paused at `hitl_approval_gate`.
+
+<!-- Add Screenshot Below: assets/test_case_2_hitl_pause.png -->
+![Test Case 2 - HITL Gate Pause](assets/test_case_2_hitl_pause.png)
+
+---
+
+### Test Case 3: Resume Paused Thread (Human Decision)
+- **Endpoint:** `POST /api/v1/audit/resume/{thread_id}`
+- **Path Parameter:** `thread_id`: `demo-thread-anomaly-01`
+- **Request Body (JSON):**
+```json
+{
+  "human_decision": "APPROVE",
+  "notes": "Approved by CFO after review"
+}
+```
+- **Expected Outcome:** `200 OK` with `"status": "COMPLETED"` and `"final_status": "APPROVED"`.
+
+<!-- Add Screenshot Below: assets/test_case_3_hitl_resume.png -->
+![Test Case 3 - HITL Resume](assets/test_case_3_hitl_resume.png)
+
+---
+
+### Test Case 4: SQL Injection Blocked (Security AST Guardrail)
+- **Endpoint:** `POST /api/v1/audit/start`
+- **Path Parameter:** None
+- **Request Body (JSON):**
+```json
+{
+  "thread_id": "demo-thread-injection",
+  "user_directive": "SELECT * FROM general_ledger; DROP TABLE general_ledger;"
+}
+```
+- **Expected Outcome:** `400 Bad Request` with rejection message: `AST Validation Failed: Only read-only SELECT queries are permitted.`
+
+<!-- Add Screenshot Below: assets/test_case_4_sql_blocked.png -->
+![Test Case 4 - SQL Injection Blocked](assets/test_case_4_sql_blocked.png)
+
